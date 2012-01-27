@@ -5,8 +5,10 @@
 %    posn - [yposn, xposn, theta]
 %    rad - radius of the robot's body
 %    course - obstacle matrix (0 = obstacle ~0 = clear)
+%    varargin - {1} targetn [ytargetn, xtargetn, reserved]
 %  Outputs: none
-function drawbot(posn, rad, course)
+
+function drawbot(posn, rad, course, varargin)
 hold off;
 %show the course
 imagesc(course), axis image off; colormap gray;
@@ -23,6 +25,12 @@ plot(y,x);
 %draw little wiskers representing 10cm rangefinders
 drawang([posn(1), posn(2), posn(3) + pi/8],10+rad);
 drawang([posn(1), posn(2), posn(3) - pi/8],10+rad);
+%draw target zone, if targetn passed
+if(~isempty(varargin))
+    y = varargin{1}(1) + 2*sin(angs);
+    x = varargin{1}(2) + 2*cos(angs);
+    plot(y,x,'r');
+end
 
 %drawang - plots a ray based on starting posn, theta, and magnitude
 %  This draws rays coming from the center of the robot.  I use these to
@@ -37,3 +45,5 @@ y = [posn(1), posn(1)+ mag*sin(posn(3))];
 x = [posn(2), posn(2)+ mag*cos(posn(3))];
 %plot the line
 plot(y,x,'r');
+
+%setup target

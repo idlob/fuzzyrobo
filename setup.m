@@ -6,10 +6,12 @@
 %  so don't put points that put the robot outside of the course or in an
 %  obstacle.
 
-WANDER_MODE = 'fuzzy'; %(other otpion >>WANDER_MODE = 'default';fuzzy)
-COURSE_NAME = 'office';  %(other option >>COURSE_NAME = 'office';course)
+WANDER_MODE = 'fuzzy';  %(other otpion >>WANDER_MODE = 'default';fuzzy)
+COURSE_NAME = 'offic';  %(other option >>COURSE_NAME = 'office';course)
+GO = 1;                 %goal-oriented control
 
 posn = [0,0,0];         %ydim, xdim, angle
+targetn = [];      %ydim, xdim, reserved
 rad = 4;                %robot's body radius (pixels)
 wdia = 7;               %distance between robot's wheels (pixels)
 dt = .5;                %timestep between driving and colecting sensor data
@@ -35,13 +37,26 @@ x = x - posn(2);
 [posn(3), r] = cart2pol(x,y);
 
 %show the start position for half a second
-drawbot(posn,rad, course);
+drawbot(posn, rad, course);
 
-pause(.01);
+if(GO)
+    title('Click to specify robots target position');
+    %collect input point for robot target posn.
+    [targetn(1) targetn(2)] = ginput(1);
+
+    %show the start and target position
+    drawbot(posn, rad, course, targetn);
+end
+
+pause(0.5);
 
 %begin to wander
 if(strcmp(WANDER_MODE,'fuzzy'))
-  wander_fuzzy(posn, rad, wdia, course, dt);
+  if(GO) 
+      wander_fuzzy(posn, rad, wdia, course, dt, targetn);
+  else
+      wander_fuzzy(posn, rad, wdia, course, dt);
+  end;
 else
   wander(posn, rad, wdia, course, dt);
 end

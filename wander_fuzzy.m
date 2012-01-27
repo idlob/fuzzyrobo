@@ -1,6 +1,6 @@
 %wander_fuzzy.m - navigation behavior for robot simulation
 %  written by: Shawn Lankton
-%  modified by: Ervin Burkus
+%  modified by: Ervin Burkus, Boldizsar Kiss
 %  fuzzy controller added by: Ervin Burkus
 %
 %  This function collects 'rangefinder' data and uses it to determine
@@ -14,33 +14,40 @@
 %    wdia - diameter of the robot's wheelbase
 %    course - obstacle matrix (0 = obstacle ~0 = clear)
 %    dt - timestep to take between driving and collecting sensor data
+%    varargin - {1} targetn [ytargetn, xtargetn, reserved]
 %
 %  Outputs:
 %    none
 %
-function wander(posn, rad, wdia, course, dt)
+function wander_fuzzy(posn, rad, wdia, course, dt, varargin)
 robofis = readfis('fuzzyroboErvin.fis');
-vL_target = 5;
-vR_target = 5;
+%vL_target = 5;
+%vR_target = 5;
 for i = 1:dt:1000 % Drive Around
     rangeL = rangefinder([posn(1), posn(2), posn(3)+pi/8], rad, course); %left
     rangeR = rangefinder([posn(1), posn(2), posn(3)-pi/8], rad, course); %right
     rangeC = rangefinder(posn, rad,course); %center
 
-    if(rangeL > 10) rangeL = 10; end
-    if(rangeR > 10) rangeR = 10; end
-    if(rangeC > 10) rangeC = 10; end
+    if(rangeL > 10), rangeL = 10; end
+    if(rangeR > 10), rangeR = 10; end
+    if(rangeC > 10), rangeC = 10; end
 	
     out = evalfis([rangeL, rangeC, rangeR], robofis);
     vR = out(1);
     vL = out(2);
 	
     posn = drive(posn, wdia, vL, vR, dt); %determine new position
-    if(detectcollision(posn,rad,course))
+    
+    if(detectcollision(posn,rad,course)) %if detects collision displays messeage
         disp(['Collision Detected at (' num2str(posn(1)) ...
         ',' num2str(posn(2)) ')']);
     end
-    drawbot(posn,rad,course); %draw the robot
+
+    if(isempty(varargin)) %are we GO?
+        drawbot(posn,rad,course); %draw the robot
+    else
+        drawbot(posn,rad,course,varargin{1}); %draw the robot
+    end
     drawnow;
 end
 %rangefinder.m - finds distance to nearest obstacle
