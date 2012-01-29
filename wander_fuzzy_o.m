@@ -1,7 +1,6 @@
 %wander_fuzzy.m - navigation behavior for robot simulation
 %  written by: Shawn Lankton
-%  modified by: Ervin Burkus
-%  messed up by: Boldizsar Kiss
+%  modified by: Ervin Burkus, Boldizsar Kiss
 %  fuzzy controller added by: Ervin Burkus
 %
 %  This function collects 'rangefinder' data and uses it to determine
@@ -28,10 +27,6 @@ for i = 1:dt:1000 % Drive Around
     rangeL = rangefinder([posn(1), posn(2), posn(3)+pi/8], rad, course); %left
     rangeR = rangefinder([posn(1), posn(2), posn(3)-pi/8], rad, course); %right
     rangeC = rangefinder(posn, rad,course); %center
-    
-    distY = varargin{1}(2) - posn(2); 
-    distX = varargin{1}(1) - posn(1);
-    disp([num2str(distY),' ',num2str(distX),' ',num2str(posn(3))]);
 
     if(rangeL > 10), rangeL = 10; end
     if(rangeR > 10), rangeR = 10; end
@@ -54,7 +49,6 @@ for i = 1:dt:1000 % Drive Around
         drawbot(posn,rad,course,varargin{1}); %draw the robot
     end
     drawnow;
-    %pause(.5);
 end
 %rangefinder.m - finds distance to nearest obstacle
 %  written by: Shawn Lankton
