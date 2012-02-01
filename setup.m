@@ -10,7 +10,7 @@ WANDER_MODE = 'fuzzy';  %(other otpion >>WANDER_MODE = 'default';fuzzy)
 COURSE_NAME = 'offic';  %(other option >>COURSE_NAME = 'office';course)
 GO = 1;                 %goal-oriented control
 
-posn = [0,0,0];         %ydim, xdim, angle
+posn = [0,0,0,0];         %ydim, xdim, angle
 targetn = [];      %ydim, xdim, reserved
 rad = 4;                %robot's body radius (pixels)
 wdia = 7;               %distance between robot's wheels (pixels)
@@ -35,6 +35,7 @@ title('Click to specify robots inital heading');
 y = y - posn(1);
 x = x - posn(2);
 [posn(3), r] = cart2pol(x,y);
+posn(4) = posn(3);
 
 %show the start position for half a second
 drawbot(posn, rad, course);

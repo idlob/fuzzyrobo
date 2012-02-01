@@ -29,9 +29,12 @@ for i = 1:dt:1000 % Drive Around
     rangeR = rangefinder([posn(1), posn(2), posn(3)-pi/8], rad, course); %right
     rangeC = rangefinder(posn, rad,course); %center
     
+    fin = floor(posn(3) / (2*pi));
+    fi = posn(3) - (fin*2*pi);
+    
     distY = varargin{1}(2) - posn(2); 
     distX = varargin{1}(1) - posn(1);
-    disp([num2str(distY),' ',num2str(distX),' ',num2str(posn(3))]);
+    disp([num2str(distY),' ',num2str(distX),' ',num2str(fi*(180/pi)),' ',num2str(fi*(180/pi))]);
 
     if(rangeL > 10), rangeL = 10; end
     if(rangeR > 10), rangeR = 10; end
@@ -42,6 +45,18 @@ for i = 1:dt:1000 % Drive Around
     vL = out(2);
 	
     posn = drive(posn, wdia, vL, vR, dt); %determine new position
+% title('Click to specify robots starting position');
+% %collect input point for robot starting posn.
+% [posn(1) posn(2)] = ginput(1);
+% drawbot(posn,rad, course);
+% 
+% title('Click to specify robots inital heading');
+% %collect input point for robot heading
+% [y x] = ginput(1);
+% y = y - posn(1);
+% x = x - posn(2);
+% [posn(3), r] = cart2pol(x,y);
+
     
     if(detectcollision(posn,rad,course)) %if detects collision displays messeage
         disp(['Collision Detected at (' num2str(posn(1)) ...
@@ -54,7 +69,7 @@ for i = 1:dt:1000 % Drive Around
         drawbot(posn,rad,course,varargin{1}); %draw the robot
     end
     drawnow;
-    %pause(.5);
+    pause(.5);
 end
 %rangefinder.m - finds distance to nearest obstacle
 %  written by: Shawn Lankton
@@ -127,6 +142,7 @@ function [newposn] = drive(posn, wdia, vL, vR, t)
 vdiff = vR-vL; %get speed differences & sums
 vsum = vR+vL;
 newposn(3) = posn(3) + vdiff*t/wdia; %calculate new angle (pretty simple)
+newposn(4) = vdiff*t/wdia; %calculate new angle (pretty simple)
 if(vdiff == 0)
     %calculate new [y x] if wheels moving together.
     newposn(1) = vL*t*sin(posn(3))+posn(1);
